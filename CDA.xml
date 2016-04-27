@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:sdtc="urn:hl7-org:sdtc">
+	<typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3" />
+	<id root="1.3.6.1.4.1.21367.2008.1.2.140" extension="180f219f-97a8-486d-99d9-ed631fe4fc57" />
+	<code code="28655-9" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"
+		displayName="Discharge Summary from Responsible Clinician" />
+	<title>Discharge Summary from Responsible Clinician</title>
+	<effectiveTime value="20130528221221+0000" />
+	<confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" codeSystemName="Confidentiality"
+		displayName="Normal" />
+	<languageCode code="en-US" />
+	<recordTarget>
+		<patientRole>
+			<id root="" />
+			<addr>
+				<streetAddressLine>2222 Home Street</streetAddressLine>
+				<county>Worcester</county>
+			</addr>
+			<telecom use="WP" value="tel:+1 555-555-2003" />
+			<patient>
+				<name>
+					<given>Eve</given>
+					<family>Everywoman</family>
+				</name>
+				<administrativeGenderCode code="F" displayName="Female" codeSystem="2.16.840.1.113883.5.1"
+					codeSystemName="AdministrativeGender" />
+				<birthTime value="19550106" />
+				<raceCode code="2060-2" displayName="African" />
+				<sdtc:raceCode code="2028-9" displayName="Asian" />
+				<ethnicGroupCode code="2186-5" displayName="Not Hispanic or Latino" />
+				<religiousAffiliationCode code="1006" displayName="Animism" />
+			</patient>
+		</patientRole>
+	</recordTarget>
+	<author>
+		<time value="20130528221221+0000" />
+		<assignedAuthor>
+			<id root="1.3.6.1.4.1.21367.2008.1.2.140.0" extension="http://www.acme.org/practitioners#23" />
+			<assignedPerson>
+				<name>
+					<prefix>Dr</prefix>
+					<given>Adam</given>
+					<family>Careful</family>
+				</name>
+			</assignedPerson>
+			<representedOrganization>
+				<id root="1.3.6.1.4.1.21367.2008.1.2.140" />
+				<ns252:name xmlns:ns252="urn:hl7-org:v3">CPN Hospital</ns252:name>
+				<ns253:addr xmlns:ns253="urn:hl7-org:v3">
+					<ns254:streetAddressLine xmlns:ns254="urn:hl7-org:v3">116 Huntington Ave</ns254:streetAddressLine>
+					<ns255:city xmlns:ns255="urn:hl7-org:v3">Boston</ns255:city>
+					<ns256:state xmlns:ns256="urn:hl7-org:v3">MA</ns256:state>
+					<ns257:postalCode xmlns:ns257="urn:hl7-org:v3">02116</ns257:postalCode>
+					<ns258:country xmlns:ns258="urn:hl7-org:v3">USA</ns258:country>
+				</ns253:addr>
+			</representedOrganization>
+		</assignedAuthor>
+	</author>
+	<custodian>
+		<assignedCustodian>
+			<representedCustodianOrganization>
+				<id root="1.3.6.1.4.1.21367.2008.1.2.140" />
+				<ns259:name xmlns:ns259="urn:hl7-org:v3">CPN Hospital</ns259:name>
+				<ns260:addr xmlns:ns260="urn:hl7-org:v3">
+					<ns261:streetAddressLine xmlns:ns261="urn:hl7-org:v3">116 Huntington Ave</ns261:streetAddressLine>
+					<ns262:city xmlns:ns262="urn:hl7-org:v3">Boston</ns262:city>
+					<ns263:state xmlns:ns263="urn:hl7-org:v3">MA</ns263:state>
+					<ns264:postalCode xmlns:ns264="urn:hl7-org:v3">02116</ns264:postalCode>
+					<ns265:country xmlns:ns265="urn:hl7-org:v3">USA</ns265:country>
+				</ns260:addr>
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	<legalAuthenticator>
+		<time value="20130528221221+0000" />
+		<signatureCode code="S" />
+		<assignedEntity>
+			<id root="1.3.6.1.4.1.21367.2008.1.2.140.0" extension="http://www.acme.org/practitioners#23" />
+			<assignedPerson>
+				<name>
+					<prefix>Dr</prefix>
+					<given>Adam</given>
+					<family>Careful</family>
+				</name>
+			</assignedPerson>
+			<representedOrganization>
+				<id root="1.3.6.1.4.1.21367.2008.1.2.140" />
+				<ns266:name xmlns:ns266="urn:hl7-org:v3">CPN Hospital</ns266:name>
+				<ns267:addr xmlns:ns267="urn:hl7-org:v3">
+					<ns268:streetAddressLine xmlns:ns268="urn:hl7-org:v3">116 Huntington Ave</ns268:streetAddressLine>
+					<ns269:city xmlns:ns269="urn:hl7-org:v3">Boston</ns269:city>
+					<ns270:state xmlns:ns270="urn:hl7-org:v3">MA</ns270:state>
+					<ns271:postalCode xmlns:ns271="urn:hl7-org:v3">02116</ns271:postalCode>
+					<ns272:country xmlns:ns272="urn:hl7-org:v3">USA</ns272:country>
+				</ns267:addr>
+			</representedOrganization>
+		</assignedEntity>
+	</legalAuthenticator>
+	<authenticator>
+		<time value="20130528221219+0000" />
+		<signatureCode code="S" />
+		<assignedEntity>
+			<id root="1.3.6.1.4.1.21367.2008.1.2.140.0" extension="http://www.acme.org/practitioners#23" />
+			<assignedPerson>
+				<name>
+					<prefix>Dr</prefix>
+					<given>Adam</given>
+					<family>Careful</family>
+				</name>
+			</assignedPerson>
+			<representedOrganization>
+				<id root="1.3.6.1.4.1.21367.2008.1.2.140" />
+				<ns273:name xmlns:ns273="urn:hl7-org:v3">CPN Hospital</ns273:name>
+				<ns274:addr xmlns:ns274="urn:hl7-org:v3">
+					<ns275:streetAddressLine xmlns:ns275="urn:hl7-org:v3">116 Huntington Ave</ns275:streetAddressLine>
+					<ns276:city xmlns:ns276="urn:hl7-org:v3">Boston</ns276:city>
+					<ns277:state xmlns:ns277="urn:hl7-org:v3">MA</ns277:state>
+					<ns278:postalCode xmlns:ns278="urn:hl7-org:v3">02116</ns278:postalCode>
+					<ns279:country xmlns:ns279="urn:hl7-org:v3">USA</ns279:country>
+				</ns274:addr>
+			</representedOrganization>
+		</assignedEntity>
+	</authenticator>
+	<documentationOf>
+		<serviceEvent>
+			<code code="99238" displayName="Discharge" />
+			<effectiveTime>
+				<low value="20130120" />
+				<high value="20130201" />
+			</effectiveTime>
+		</serviceEvent>
+	</documentationOf>
+	<componentOf>
+		<encompassingEncounter>
+			<id root="" extension="S100" />
+			<code code="99238" displayName="Discharge" />
+			<effectiveTime>
+				<low value="20130120123002+0000" />
+				<high value="20130201123002+0000" />
+			</effectiveTime>
+			<encounterParticipant typeCode="ATND">
+				<time>
+					<low value="20130120123002+0000" />
+					<high value="20130201123002+0000" />
+				</time>
+				<assignedEntity>
+					<id root="1.3.6.1.4.1.21367.2008.1.2.140.0" extension="http://www.acme.org/practitioners#23" />
+					<assignedPerson>
+						<name>
+							<prefix>Dr</prefix>
+							<given>Adam</given>
+							<family>Careful</family>
+						</name>
+					</assignedPerson>
+					<representedOrganization>
+						<id root="1.3.6.1.4.1.21367.2008.1.2.140" />
+						<ns280:name xmlns:ns280="urn:hl7-org:v3">CPN Hospital</ns280:name>
+						<ns281:addr xmlns:ns281="urn:hl7-org:v3">
+							<ns282:streetAddressLine xmlns:ns282="urn:hl7-org:v3">116 Huntington Ave</ns282:streetAddressLine>
+							<ns283:city xmlns:ns283="urn:hl7-org:v3">Boston</ns283:city>
+							<ns284:state xmlns:ns284="urn:hl7-org:v3">MA</ns284:state>
+							<ns285:postalCode xmlns:ns285="urn:hl7-org:v3">02116</ns285:postalCode>
+							<ns286:country xmlns:ns286="urn:hl7-org:v3">USA</ns286:country>
+						</ns281:addr>
+					</representedOrganization>
+				</assignedEntity>
+			</encounterParticipant>
+		</encompassingEncounter>
+	</componentOf>
+	<component>
+		<structuredBody>
+			<component>
+				<section>
+					<text />
+				</section>
+			</component>
+			<component>
+				<section>
+					<code code="29299-5" displayName="Reason for visit Narrative" />
+					<title>Reason for admission</title>
+					<text />
+				</section>
+			</component>
+			<component>
+				<section>
+					<code code="10183-2" displayName="Hospital discharge medications Narrative" />
+					<title>Medications on Discharge</title>
+					<text />
+				</section>
+			</component>
+			<component>
+				<section>
+					<code code="48765-2" displayName="Allergies and adverse reactions Document" />
+					<title>Known allergies</title>
+					<text />
+				</section>
+			</component>
+		</structuredBody>
+	</component>
+</ClinicalDocument>

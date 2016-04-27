@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Configuration>
+    <ClinicalDocument>
+        <title>allowed</title>
+        <documentationOf>allowed</documentationOf>
+        <documentGeneral>allowed</documentGeneral>
+        <confidentialityCode allowed="true">
+            <originalText>allowed</originalText>
+        </confidentialityCode>
+        <title>allowed</title>
+        <author allowed="true">
+            <time>allowed</time>
+            <assignedAuthor allowed="true">
+                <assignedPerson allowed="true">
+                    <name>allowed</name>
+                    <prefix>allowed</prefix>
+                    <given>allowed</given>
+                    <family>allowed</family>
+                </assignedPerson>
+                <representedOrganization>
+                    <name>allowed</name>
+                    <addr>
+                        <streetAddressLine>allowed</streetAddressLine>
+                        <city>allowed</city>
+                        <state>allowed</state>
+                        <postalCode>allowed</postalCode>
+                        <country>allowed</country>
+                    </addr>
+                </representedOrganization>
+            </assignedAuthor>
+        </author>
+        <recordTarget>
+            <patientRole allowed="true">
+                <addr>allowed</addr>
+                <telecom>allowed</telecom>
+                <patient>
+                    <name allowed="true">
+                        <given>allowed</given>
+                        <family>allowed</family>
+                    </name>
+                    <administrativeGenderCode>allowed</administrativeGenderCode>
+                    <birthTime>allowed</birthTime>
+                    <raceCode>allowed</raceCode>
+                    <ethnicGroupCode>allowed</ethnicGroupCode>
+                    <religiousAffiliationCode>allowed</religiousAffiliationCode>
+                </patient>
+            </patientRole>
+        </recordTarget>
+    </ClinicalDocument>
+</Configuration>
