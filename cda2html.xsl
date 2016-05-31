@@ -2,7 +2,7 @@
 <!--
   Title: CDA XSL StyleSheet
   Original Filename: cda.xsl
-  Version: 3.0
+  Version: 3.1
   Revision History: 08/12/08 Jingdong Li updated
   Revision History: 12/11/09 KH updated
   Revision History:  03/30/10 Jingdong Li updated.
@@ -13,6 +13,7 @@
   Revision History:  04/07/14 Rick Geimer more security fixes. Limited copy of only legal CDA table attributes to XHTML output.
   Revision History:  04/07/14 Rick Geimer more security fixes. Fixed some bugs from the hot fix on 4/6 ($uc and $lc swapped during some translates). Added limit-external-images param that defaults to yes. When set to yes, no URIs with colons (protocol URLs) or beginning with double slashes (protocol relative URLs) are allowed in observation media. I'll revise later to add a whitelist capability.
   Revision History:  04/13/14 Rick Geimer more security fixes. Added sandbox attribute to iframe. Added td to the list of elements with restricted table attributes (missed that one previously). Fixed some typos. Cleaned up CSS styles. Merged the table templates since they all use the same code. Fixed a bug with styleCode processing that could result in lost data. Added external-image-whitelist param.
+  Revision History:  30/05/16 Istvan Nagy updated.
   Specification: ANSI/HL7 CDAR2
   The current version and documentation are available at http://www.lantanagroup.com/resources/tools/.
   We welcome feedback and contributions to tools@lantanagroup.com
@@ -71,6 +72,7 @@
                     <xsl:when test="document($config.file)/Configuration/ClinicalDocument/title = 'allowed'">
                         <xsl:value-of select="$title"/>
                     </xsl:when>
+                    <xsl:otherwise>N/A</xsl:otherwise>
                     </xsl:choose>
                 </title>
                 <xsl:call-template name="addCSS"/>
@@ -97,6 +99,7 @@
                 <xsl:call-template name="informationRecipient"/>
                 <xsl:call-template name="legalAuthenticator"/>
                 <xsl:call-template name="custodian"/>
+                <xsl:call-template name="substanceAdministration"/>
                 <!-- END display top portion of clinical document -->
                 <!-- produce table of contents -->
                 <xsl:if test="not(//n1:nonXMLBody)">
@@ -118,14 +121,23 @@
             <a name="toc">Table of Contents</a>
         </h2>
         <ul>
-            <xsl:for-each select="n1:component/n1:structuredBody/n1:component/n1:section/n1:title">
-                <li>
-                    <a href="#{generate-id(.)}">
-                        <xsl:value-of select="."/>
-                    </a>
-                </li>
+        <xsl:for-each select="n1:component/n1:structuredBody/n1:component/n1:section">
+        <xsl:variable name="context" select="."/>
+        <xsl:variable name="title" select="n1:title"/>
+        <xsl:variable name="rootId" select="n1:templateId/@root"/>
+
+            <xsl:for-each select="document($config.file)/Configuration/ClinicalDocument/component/structuredBody/component/section/templateId">
+                    <xsl:if test="$rootId = self::node()/@root and self::node() = 'allowed'">
+                        <li>
+                        <a href="#{generate-id($context)}">
+                            <xsl:value-of select="$title"/>
+                        </a>
+                        </li>
+                    </xsl:if>
             </xsl:for-each>
+        </xsl:for-each>
         </ul>
+
     </xsl:template>
     <!-- header elements -->
     <xsl:template name="documentGeneral">
@@ -383,6 +395,9 @@
     <!-- componentOf -->
     <xsl:template name="componentOf">
         <xsl:if test="n1:componentOf">
+            <xsl:choose>
+            <xsl:when test="document($config.file)/Configuration/ClinicalDocument/componentOf/encompassingEncounter='allowed'">
+
             <table class="header_table">
                 <tbody>
                     <xsl:for-each select="n1:componentOf/n1:encompassingEncounter">
@@ -529,12 +544,16 @@
                     </xsl:for-each>
                 </tbody>
             </table>
+            </xsl:when>
+            </xsl:choose>
         </xsl:if>
     </xsl:template>
     <!-- custodian -->
     <xsl:template name="custodian">
         <xsl:if test="n1:custodian">
-            <table class="header_table">
+            <xsl:choose>
+            <xsl:when test="document($config.file)/Configuration/ClinicalDocument/custodian/assignedCustodian='allowed'">
+                <table class="header_table">
                 <tbody>
                     <tr>
                         <td class="td_header_role_name">
@@ -574,6 +593,8 @@
                     </xsl:if>
                 </tbody>
             </table>
+            </xsl:when>
+            </xsl:choose>
         </xsl:if>
     </xsl:template>
     <!-- documentationOf -->
@@ -924,58 +945,86 @@
                         </tr>
                         </xsl:when>
                     </xsl:choose>
-                    <tr>
-                        <td class="td_header_role_name">
-                            <span class="td_label">
-                                <xsl:text>Sex</xsl:text>
-                            </span>
-                        </td>
-                        <td class="td_header_role_value">
-                            <xsl:for-each select="n1:patient/n1:administrativeGenderCode">
-                                <xsl:call-template name="show-gender"/>
-                            </xsl:for-each>
-                        </td>
-                    </tr>
-                    <xsl:if test="n1:patient/n1:raceCode | (n1:patient/n1:ethnicGroupCode)">
+                    <xsl:choose>
+                        <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/patient/administrativeGenderCode='allowed'">
                         <tr>
                             <td class="td_header_role_name">
                                 <span class="td_label">
-                                    <xsl:text>Race</xsl:text>
+                                    <xsl:text>Sex</xsl:text>
                                 </span>
                             </td>
                             <td class="td_header_role_value">
-                                <xsl:choose>
-                                    <xsl:when test="n1:patient/n1:raceCode">
-                                        <xsl:for-each select="n1:patient/n1:raceCode">
-                                            <xsl:call-template name="show-race-ethnicity"/>
-                                        </xsl:for-each>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>Information not available</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                                <xsl:for-each select="n1:patient/n1:administrativeGenderCode">
+                                    <xsl:call-template name="show-gender"/>
+                                </xsl:for-each>
                             </td>
                         </tr>
-                        <tr>
-                            <td  class="td_header_role_name">
-                                <span class="td_label">
-                                    <xsl:text>Ethnicity</xsl:text>
-                                </span>
-                            </td>
-                            <td class="td_header_role_value">
+                        </xsl:when>
+                    </xsl:choose>
+                            <xsl:if test="n1:patient/n1:raceCode | (n1:patient/n1:ethnicGroupCode)">
                                 <xsl:choose>
-                                    <xsl:when test="n1:patient/n1:ethnicGroupCode">
-                                        <xsl:for-each select="n1:patient/n1:ethnicGroupCode">
-                                            <xsl:call-template name="show-race-ethnicity"/>
-                                        </xsl:for-each>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>Information not available</xsl:text>
-                                    </xsl:otherwise>
+                                <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/patient/raceCode='allowed'">
+                                <tr>
+                                    <td class="td_header_role_name">
+                                        <span class="td_label">
+                                            <xsl:text>Race</xsl:text>
+                                        </span>
+                                    </td>
+                                    <td class="td_header_role_value">
+                                        <xsl:choose>
+                                            <xsl:when test="n1:patient/n1:raceCode">
+                                                <xsl:for-each select="n1:patient/n1:raceCode">
+                                                    <xsl:call-template name="show-race-ethnicity"/>
+                                                </xsl:for-each>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:text>Information not available</xsl:text>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </td>
+                                </tr>
+                                </xsl:when>
                                 </xsl:choose>
-                            </td>
-                        </tr>
-                    </xsl:if>
+                                <xsl:choose>
+                                <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/patient/ethnicGroupCode='allowed'">
+                                <tr>
+                                    <td  class="td_header_role_name">
+                                        <span class="td_label">
+                                            <xsl:text>Ethnicity</xsl:text>
+                                        </span>
+                                    </td>
+                                    <td class="td_header_role_value">
+                                        <xsl:choose>
+                                            <xsl:when test="n1:patient/n1:ethnicGroupCode">
+                                                <xsl:for-each select="n1:patient/n1:ethnicGroupCode">
+                                                    <xsl:call-template name="show-race-ethnicity"/>
+                                                </xsl:for-each>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:text>Information not available</xsl:text>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </td>
+                                </tr>
+                                </xsl:when>
+                                </xsl:choose>
+                            </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/patient/maritalStatusCode='allowed'">
+                            <tr>
+                                <td class="td_header_role_name">
+                                    <span class="td_label">
+                                        <xsl:text>Martial status</xsl:text>
+                                    </span>
+                                </td>
+                                <td class="td_header_role_value">
+                                    <xsl:for-each select="n1:patient/n1:maritalStatusCode">
+                                        <xsl:call-template name="show-martial-status"/>
+                                    </xsl:for-each>
+                                </td>
+                            </tr>
+                        </xsl:when>
+                    </xsl:choose>
                     <tr>
                         <td class="td_header_role_name">
                             <span class="td_label">
@@ -988,17 +1037,67 @@
                             </xsl:call-template>
                         </td>
                     </tr>
+                    <xsl:choose>
+                        <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/id='allowed'">
+                        <tr>
+                            <td class="td_header_role_name">
+                                <span class="td_label">Patient IDs</span>
+                            </td>
+                            <td class="td_header_role_value">
+                                <xsl:for-each select="n1:id">
+                                    <xsl:call-template name="show-id"/>
+                                    <br/>
+                                </xsl:for-each>
+                            </td>
+                        </tr>
+                        </xsl:when>
+                    </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/patient/languageCommunication/languageCode='allowed'">
+                            <tr>
+                                <td class="td_header_role_name">
+                                    <span class="td_label">Language code</span>
+                                </td>
+                                <td class="td_header_role_value">
+                                    <xsl:for-each select="n1:patient/n1:languageCommunication/n1:languageCode">
+                                        <xsl:call-template name="show-language-code"/>
+                                        <br/>
+                                    </xsl:for-each>
+                                </td>
+                            </tr>
+                        </xsl:when>
+                    </xsl:choose>
                     <tr>
                         <td class="td_header_role_name">
-                            <span class="td_label">Patient IDs</span>
+                            <span class="td_label">
+                                <xsl:text>Provider Organization</xsl:text>
+                            </span>
                         </td>
-                        <td class="td_header_role_value">
-                            <xsl:for-each select="n1:id">
-                                <xsl:call-template name="show-id"/>
-                                <br/>
-                            </xsl:for-each>
-                        </td>
+                        <xsl:choose>
+                            <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/patientRole/providerOrganization/name='allowed'">
+                                <td class="td_header_role_value">
+                                    <xsl:call-template name="show-name">
+                                        <xsl:with-param name="name" select="n1:providerOrganization"/>
+                                    </xsl:call-template>
+                                </td>
+                            </xsl:when>
+                        </xsl:choose>
                     </tr>
+                    <xsl:choose>
+                        <xsl:when test="document($config.file)/Configuration/ClinicalDocument/recordTarget/providerOrganization/id='allowed'">
+                            <tr>
+                                <td class="td_header_role_name">
+                                    <span class="td_label">Provider Organization IDs</span>
+                                </td>
+                                <td class="td_header_role_value">
+                                    <xsl:for-each select="n1:id">
+                                        <xsl:call-template name="show-id"/>
+                                        <br/>
+                                    </xsl:for-each>
+                                </td>
+                            </tr>
+                        </xsl:when>
+                    </xsl:choose>
                 </xsl:if>
             </xsl:for-each>
         </table>
@@ -1062,6 +1161,21 @@
             </table>
         </xsl:if>
     </xsl:template>
+    <!-- substanceAdministration  -->
+    <xsl:template name="substanceAdministration">
+        <xsl:if test="n1:substanceAdministration">
+            <xsl:text>Substance administration</xsl:text>
+                <xsl:variable name="context" select="."/>
+                <xsl:variable name="title" select="n1:title"/>
+                <xsl:variable name="rootId" select="n1:templateId/@root"/>
+                <xsl:call-template name="section-author">
+                    <xsl:with-param name="context" select="n1:author"/>
+                </xsl:call-template>
+                <br/>
+            <xsl:for-each select="n1:component/n1:section/n1:entry/n1:substanceAdministration">
+            </xsl:for-each>
+        </xsl:if>
+    </xsl:template>
     <!-- setAndVersion -->
     <xsl:template name="setAndVersion">
         <xsl:if test="n1:setId and n1:versionNumber">
@@ -1087,7 +1201,17 @@
     <!-- show StructuredBody  -->
     <xsl:template match="n1:component/n1:structuredBody">
         <xsl:for-each select="n1:component/n1:section">
-            <xsl:call-template name="section"/>
+                <xsl:variable name="context" select="."/>
+                <xsl:variable name="rootId" select="n1:templateId/@root"/>
+
+                <xsl:for-each select="document($config.file)/Configuration/ClinicalDocument/component/structuredBody/component/section/templateId">
+                    <xsl:if test="$rootId = self::node()/@root and self::node() = 'allowed'">
+                        <xsl:call-template name="section">
+                            <xsl:with-param name="context" select="$context" />
+                            <xsl:with-param name="is2Render" select="$rootId = self::node()/@root and self::node() = 'allowed'"/>
+                        </xsl:call-template>
+                    </xsl:if>
+                </xsl:for-each>
         </xsl:for-each>
     </xsl:template>
     <!-- show nonXMLBody -->
@@ -1125,26 +1249,43 @@
       and process any nested component/sections
     -->
     <xsl:template name="section">
-        <xsl:call-template name="section-title">
-            <xsl:with-param name="title" select="n1:title"/>
-        </xsl:call-template>
-        <xsl:call-template name="section-author"/>
-        <xsl:call-template name="section-text"/>
-        <xsl:for-each select="n1:component/n1:section">
-            <xsl:call-template name="nestedSection">
-                <xsl:with-param name="margin" select="2"/>
-            </xsl:call-template>
-        </xsl:for-each>
+        <xsl:param name = "context"/>
+        <xsl:param name = "is2Render" />
+        <xsl:choose>
+            <xsl:when test="$is2Render = 0">
+                <!-- does not render it -->
+                <xsl:value-of select='$is2Render'/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="section-title">
+                    <xsl:with-param name="context" select="$context"/>
+                    <xsl:with-param name="title" select="$context/n1:title"/>
+                </xsl:call-template>
+                <xsl:call-template name="section-author">
+                    <xsl:with-param name="context" select="$context"/>
+                </xsl:call-template>
+                <xsl:call-template name="section-text">
+                    <xsl:with-param name="context" select="$context"/>
+                </xsl:call-template>
+                <xsl:for-each select="$context/n1:component/n1:section">
+                    <xsl:call-template name="nestedSection">
+                        <xsl:with-param name="margin" select="2"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <!-- top level section title -->
     <xsl:template name="section-title">
+        <xsl:param name="context"/>
         <xsl:param name="title"/>
         <xsl:choose>
             <xsl:when test="count(/n1:ClinicalDocument/n1:component/n1:structuredBody/n1:component[n1:section]) &gt; 1">
                 <h3>
-                    <a name="{generate-id($title)}" href="#toc">
+                    <a href="#{generate-id($context)}">
                         <xsl:value-of select="$title"/>
                     </a>
+                    <!-- a name="{generate-id($title)}" href="#"><xsl:value-of select="$title"/></a -->
                 </h3>
             </xsl:when>
             <xsl:otherwise>
@@ -1156,29 +1297,30 @@
     </xsl:template>
     <!-- section author -->
     <xsl:template name="section-author">
-        <xsl:if test="count(n1:author)&gt;0">
+        <xsl:param name = "context"/>
+        <xsl:if test="count($context/n1:author)&gt;0">
             <div style="margin-left : 2em;">
                 <b>
                     <xsl:text>Section Author: </xsl:text>
                 </b>
-                <xsl:for-each select="n1:author/n1:assignedAuthor">
+                <xsl:for-each select="$context/n1:author/n1:assignedAuthor">
                     <xsl:choose>
-                        <xsl:when test="n1:assignedPerson/n1:name">
+                        <xsl:when test="$context/n1:assignedPerson/n1:name">
                             <xsl:call-template name="show-name">
-                                <xsl:with-param name="name" select="n1:assignedPerson/n1:name"/>
+                                <xsl:with-param name="name" select="$context/n1:assignedPerson/n1:name"/>
                             </xsl:call-template>
                             <xsl:if test="n1:representedOrganization">
                                 <xsl:text>, </xsl:text>
                                 <xsl:call-template name="show-name">
-                                    <xsl:with-param name="name" select="n1:representedOrganization/n1:name"/>
+                                    <xsl:with-param name="name" select="$context/n1:representedOrganization/n1:name"/>
                                 </xsl:call-template>
                             </xsl:if>
                         </xsl:when>
-                        <xsl:when test="n1:assignedAuthoringDevice/n1:softwareName">
-                            <xsl:value-of select="n1:assignedAuthoringDevice/n1:softwareName"/>
+                        <xsl:when test="$context/n1:assignedAuthoringDevice/n1:softwareName">
+                            <xsl:value-of select="$context/n1:assignedAuthoringDevice/n1:softwareName"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:for-each select="n1:id">
+                            <xsl:for-each select="$context/n1:id">
                                 <xsl:call-template name="show-id"/>
                                 <br/>
                             </xsl:for-each>
@@ -1191,8 +1333,9 @@
     </xsl:template>
     <!-- top-level section Text   -->
     <xsl:template name="section-text">
+        <xsl:param name = "context"/>
         <div>
-            <xsl:apply-templates select="n1:text"/>
+            <xsl:apply-templates select="$context/n1:text"/>
         </div>
     </xsl:template>
     <!-- nested component/section -->
@@ -1728,6 +1871,28 @@
     </xsl:template>
     <!-- show-race-ethnicity  -->
     <xsl:template name="show-race-ethnicity">
+        <xsl:choose>
+            <xsl:when test="@displayName">
+                <xsl:value-of select="@displayName"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@code"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- show-language-code  -->
+    <xsl:template name="show-language-code">
+        <xsl:choose>
+            <xsl:when test="@code">
+                <xsl:value-of select="@code"/>
+            </xsl:when>
+            <xsl:otherwise>
+                "N/A"
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- show-martial-status  -->
+    <xsl:template name="show-martial-status">
         <xsl:choose>
             <xsl:when test="@displayName">
                 <xsl:value-of select="@displayName"/>
